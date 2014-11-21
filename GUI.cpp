@@ -22,14 +22,19 @@
 
 using namespace std;
 
-GUI::GUI(QWidget *parent) :
+GUI::GUI(QWidget *parent, QTcpSocket *socket) :
     QMainWindow(parent),
     ui(new Ui::GUI)
 {
     ui->setupUi(this);
+    this->hide();
     this->setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
 
     facade = new Facade();
+
+    _socket = socket;
+
+
 
     //Barra de Menu
     QPixmap nuevaBasePix(":/recursos/database.png");
@@ -71,6 +76,11 @@ GUI::GUI(QWidget *parent) :
 
     crearPalabrasReservadas();
 
+
+}
+
+void GUI::autenticacion()
+{
 
 }
 

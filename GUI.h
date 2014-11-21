@@ -14,6 +14,8 @@
 #include <MatrizDato.h>
 #include <ListaMetaDato.h>
 #include <metaDato.h>
+#include <mainwindow.h>
+#include <QTcpSocket>
 
 
 
@@ -26,7 +28,8 @@ class GUI : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit GUI(QWidget *parent = 0);
+    explicit GUI(QWidget *parent = 0, QTcpSocket *socket = NULL);
+    void autenticacion();
     ~GUI();
 
 private slots:
@@ -42,6 +45,7 @@ private slots:
     void vistaArbol();
     void crearPalabrasReservadas();
     void refrescaTabla();
+
 
 private:
     Ui::GUI *ui;
@@ -62,6 +66,8 @@ private:
 
     ListaMetaDato *_header;
     MatrizDato *_infoTabla;
+
+    QTcpSocket * _socket;
 
 };
 

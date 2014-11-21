@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets serialport
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets serialport network
 
 TARGET = Proyecto-3_CE-2103
 TEMPLATE = app
@@ -30,7 +30,12 @@ SOURCES += main.cpp\
     NodoDato.cpp \
     MatrizDato.cpp \
     ListaDato.cpp \
-    com.cpp
+    com.cpp \
+    crearServidor.cpp \
+    mainwindow.cpp \
+    myserver.cpp \
+    mythread.cpp \
+    simplecrypt.cpp
 
 HEADERS  += \
     facade.h \
@@ -51,10 +56,17 @@ HEADERS  += \
     NodoDato.h \
     MatrizDato.h \
     ListaDato.h \
-    com.h
+    com.h \
+    crearServidor.h \
+    mainwindow.h \
+    myserver.h \
+    mythread.h \
+    simplecrypt.h
 
 FORMS    += \
-    GUI.ui
+    GUI.ui \
+    crearServidor.ui \
+    mainwindow.ui
 
 RESOURCES += \
     recursos.qrc
