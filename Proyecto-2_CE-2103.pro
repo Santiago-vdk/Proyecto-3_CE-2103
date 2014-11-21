@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets serialport
 
-TARGET = Proyecto-2_CE-2103
+TARGET = Proyecto-3_CE-2103
 TEMPLATE = app
 
 
