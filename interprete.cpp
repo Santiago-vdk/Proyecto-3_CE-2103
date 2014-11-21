@@ -49,6 +49,20 @@ bool Interprete::revisarSintaxis(string sentencia)
     if (sentencia.find("RESTORE TABLE")==0){
         return revisarRestore(sentencia);
     }
+
+
+    if (sentencia.find("CREATE USER")==0){
+        return revisarCreateUser(sentencia);
+    }
+    if (sentencia.find("DROP USER")==0){
+        return revisarDropUser(sentencia);
+    }
+    if (sentencia.find("GRANT")==0){
+        return revisarGrant(sentencia);
+    }
+    if (sentencia.find("REVOKE")==0){
+        return revisarRevoke(sentencia);
+    }
     else{
         //aqui se deberia mostrar mensaje de error por no encontrar palabra reservada inicial
         com Puerto;
@@ -87,6 +101,20 @@ bool Interprete::ejecutar(string sentencia)
     }
     if (sentencia.find("RESTORE TABLE")==0){
         return ejecutarRestore(sentencia);
+    }
+
+
+    if (sentencia.find("CREATE USER")==0){
+        return ejecutarCreateUser(sentencia);
+    }
+    if (sentencia.find("DROP USER")==0){
+        return ejecutarDropUser(sentencia);
+    }
+    if (sentencia.find("GRANT")==0){
+        return ejecutarGrant(sentencia);
+    }
+    if (sentencia.find("REVOKE")==0){
+        return ejecutarRevoke(sentencia);
     }
     else{
         //nunca deberia entrar aqui si las funciones revisar funcionar correctamente
@@ -2034,6 +2062,99 @@ bool Interprete::revisarRestore(string sentencia)//se revisa sintaxis de restore
     }
 }
 
+bool Interprete::revisarCreateUser(string sentencia)
+{
+    if(sentencia.find("WITH PASSWORD = ")!=string::npos){
+        string nombre = sentencia.substr(sentencia.find("USER")+5,sentencia.find("WITH PASSWORD =")-5-sentencia.find("USER"));
+        string contra = sentencia.substr(sentencia.find("WITH PASSWORD = ")+16,sentencia.length());
+        if(nombre.length()>0 && contra.length()>0){
+            return true;
+        }
+        else{
+            com Puerto;
+            Puerto.enviar("msg1");
+            return false;
+        }
+    }
+    else{
+        com Puerto;
+        Puerto.enviar("msg1");
+        return false;
+    }
+}
+
+bool Interprete::revisarDropUser(string sentencia)
+{
+    string user = sentencia.substr(sentencia.find("DROP USER ")!=string::npos,sentencia.length());
+    if(user.length()>0){
+        return true;
+    }
+    else{
+        com Puerto;
+        Puerto.enviar("msg1");
+        return false;
+    }
+}
+
+bool Interprete::revisarGrant(string sentencia)
+{
+    if(sentencia.find("ON ")!=string::npos && sentencia.find("TO ")!=string::npos){
+        string permiso = sentencia.substr(sentencia.find("GRANT ")+6,sentencia.find("ON ")-sentencia.find("GRANT ")-6);
+        string archivo = sentencia.substr(sentencia.find("ON ")+3,sentencia.find("TO ")-sentencia.find("0N ")-3);
+        string usuario = sentencia.substr(sentencia.find("TO ")+3,sentencia.length());
+        if(permiso.length()>0 && archivo.length()>0 && usuario.length()>0){
+            if(permiso.compare("select")==0 || permiso.compare("insert")==0 || permiso.compare("delete")==0 || permiso.compare("update")==0){
+                return true;
+            }
+            else{
+                com Puerto;
+                Puerto.enviar("msg1");
+                return false;
+            }
+        }
+        else{
+            com Puerto;
+            Puerto.enviar("msg1");
+            return false;
+        }
+    }
+    else{
+        com Puerto;
+        Puerto.enviar("msg1");
+        return false;
+    }
+}
+
+bool Interprete::revisarRevoke(string sentencia)
+{
+    if(sentencia.find("ON ")!=string::npos && sentencia.find("TO ")!=string::npos){
+        string permiso = sentencia.substr(sentencia.find("REVOKE ")+6,sentencia.find("ON ")-sentencia.find("GRANT ")-6);
+        string archivo = sentencia.substr(sentencia.find("ON ")+3,sentencia.find("TO ")-sentencia.find("0N ")-3);
+        string usuario = sentencia.substr(sentencia.find("TO ")+3,sentencia.length());
+        if(permiso.length()>0 && archivo.length()>0 && usuario.length()>0){
+            if(permiso.compare("select")==0 || permiso.compare("insert")==0 || permiso.compare("delete")==0 || permiso.compare("update")==0){
+                return true;
+            }
+            else{
+                com Puerto;
+                Puerto.enviar("msg1");
+                return false;
+            }
+        }
+        else{
+            com Puerto;
+            Puerto.enviar("msg1");
+            return false;
+        }
+    }
+    else{
+        com Puerto;
+        Puerto.enviar("msg1");
+        return false;
+    }
+}
+
+
 
 //***************************************************************
 
@@ -2806,6 +2927,40 @@ bool Interprete::ejecutarRestore(string sentencia)//se ejecuta restore
         }
 
     }
+}
+
+bool Interprete::ejecutarCreateUser(string sentencia)
+{
+    string nombre = sentencia.substr(sentencia.find("USER")+5,sentencia.find("WITH PASSWORD =")-5-sentencia.find("USER"));
+    string contra = sentencia.substr(sentencia.find("WITH PASSWORD = ")+16,sentencia.length());
+    //aqui crea el usuario, no se especificaron restricciones de nombre o contrase;a
+    return true;
+
+}
+
+bool Interprete::ejecutarDropUser(string sentencia)
+{
+    string user = sentencia.substr(sentencia.find("DROP USER ")!=string::npos,sentencia.length());
+    //elimina a este usuario
+    return true;
+}
+
+bool Interprete::ejecutarGrant(string sentencia)
+{
+    string permiso = sentencia.substr(sentencia.find("GRANT ")+6,sentencia.find("ON ")-sentencia.find("GRANT ")-6);
+    string archivo = sentencia.substr(sentencia.find("ON ")+3,sentencia.find("TO ")-sentencia.find("0N ")-3);
+    string usuario = sentencia.substr(sentencia.find("TO ")+3,sentencia.length());
+    //ejecuta el grant
+    return true;
+}
+
+bool Interprete::ejecutarRevoke(string sentencia)
+{
+    string permiso = sentencia.substr(sentencia.find("GRANT ")+6,sentencia.find("ON ")-sentencia.find("GRANT ")-6);
+    string archivo = sentencia.substr(sentencia.find("ON ")+3,sentencia.find("TO ")-sentencia.find("0N ")-3);
+    string usuario = sentencia.substr(sentencia.find("TO ")+3,sentencia.length());
+    //ejecuta el revoke
+    return true;
 }
 
 /*------------------------------------------------------------------------------*/

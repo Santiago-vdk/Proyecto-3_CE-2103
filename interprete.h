@@ -32,6 +32,11 @@ private:
     bool revisarBackup(string sentencia);
     bool revisarRestore(string sentencia);
 
+    bool revisarCreateUser(string sentencia);
+    bool revisarDropUser(string sentencia);
+    bool revisarGrant(string sentencia);
+    bool revisarRevoke(string sentencia);
+
     bool ejecutarCreateTable(string sentencia);
     bool ejecutarSelect(string sentencia);
     bool ejecutarInsert(string sentencia);
@@ -41,6 +46,11 @@ private:
     bool ejecutarCompress(string sentencia);
     bool ejecutarBackup(string sentencia);
     bool ejecutarRestore(string sentencia);
+
+    bool ejecutarCreateUser(string sentencia);
+    bool ejecutarDropUser(string sentencia);
+    bool ejecutarGrant(string sentencia);
+    bool ejecutarRevoke(string sentencia);
 
     int cargaTablas();
     bool has_suffix(const string& s, const string& suffix);
