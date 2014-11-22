@@ -197,6 +197,9 @@ void MyThread::readyRead()
 
 
         //Llamo al Slot de registro
+
+        qDebug() << sentenciaListo;
+
         sentenciaDeUsuario(sentenciaListo);
     }
 
