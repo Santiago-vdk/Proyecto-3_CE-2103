@@ -308,7 +308,8 @@ void MyServer::quitarPermisos(QString pUsuario, QString pPermisos, QString pArch
 
 void MyServer::sentenciaNuevaUsuario(QString sentencia)
 {
-
+   qDebug() << "Here";
+    _interprete->ejecutar(sentencia.toStdString());
 }
 
 
