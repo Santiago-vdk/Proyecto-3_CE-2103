@@ -212,20 +212,8 @@ void MyServer::actualizarPermisos(QString pUsuario, QString pPermisos, QString p
                          if(comparaPermisos.compare("update") == 0){
                              permisoUpdate = "1";
                          }
-
-
-
-                         cout << "here"<< permisoSelect + "," + permisoInsert + "," + permisoDelete + "," + permisoUpdate << endl;
-
-
                          STREAMPERMISOS = permisoSelect + "," + permisoInsert + "," + permisoDelete + "," + permisoUpdate;
-
                          cout << STREAMPERMISOS << endl;
-
-
-
-
-
                          archivoPermisos.seekg(0);
                          string itera;
                          while(getline(archivoPermisos, itera)){
@@ -236,16 +224,10 @@ void MyServer::actualizarPermisos(QString pUsuario, QString pPermisos, QString p
                              else{
                                  archivoPermisosTmp << itera << "\n";
                              }
-
                          }
-
-
                      }
                      else{
-
                          string STREAMNUEVO;
-
-
                          string permisoSelect;
                          string permisoInsert;
                          string permisoDelete;
@@ -278,17 +260,10 @@ void MyServer::actualizarPermisos(QString pUsuario, QString pPermisos, QString p
                          }
 
                          STREAMNUEVO = lineReadPermisos+","+ comparaArchivo + "(" + permisoSelect + ","+ permisoInsert + ","+ permisoDelete + ","+ permisoUpdate + ")";
-
                          cout << STREAMNUEVO << endl;
-
-
                          string itera;
-
-
                          archivoPermisos.seekg(0);
                          while(getline(archivoPermisos, itera)){
-
-
                              if (itera.substr(0,itera.find(",")).compare(comparaUser) == 0 ){
 
                                  archivoPermisosTmp << STREAMNUEVO << "\n";
@@ -296,18 +271,13 @@ void MyServer::actualizarPermisos(QString pUsuario, QString pPermisos, QString p
                              else{
                                  archivoPermisosTmp << itera << "\n";
                              }
-
                          }
-
-
 
                      }
                  }
             }
         }
     }
-
-
     archivoPermisosTmp.close();
     archivo.close();
     archivoPermisos.close();
@@ -315,6 +285,16 @@ void MyServer::actualizarPermisos(QString pUsuario, QString pPermisos, QString p
     remove(nombreArchivoPermisos);
 
     rename("temporal.txt",nombreArchivoPermisos);
+
+
+
+
+
+
+}
+
+void MyServer::quitarPermisos(QString pUsuario, QString pPermisos, QString pArchivo)
+{
 
 
 

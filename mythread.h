@@ -22,7 +22,7 @@ signals:
     void emitirNotificacionUsuario(QString pMensaje);
     void eliminarUsuario(QString pUsuario);
     void cambiarPermisos(QString pUsuario,QString pPermisos, QString pArchivo);
-    void removerPermisos(QString pUsuario,QString pPermisos, QString pArchivo);
+    void removerPermiso(QString pUsuario,QString pPermisos, QString pArchivo);
 
 public slots:
     void readyRead();
