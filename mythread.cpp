@@ -180,6 +180,7 @@ void MyThread::readyRead()
     if(dataString == "006\n"){
 
 
+        qDebug("006");
         QString sentencia(socket->readLine()) ;
 
 
