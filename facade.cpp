@@ -1,11 +1,11 @@
 #include "facade.h"
 #include "sistemaArchivos.h"
 
-Facade::Facade()
+Facade::Facade(QTcpSocket *socket)
 {
 
 
-    _interprete = new Interprete();
+    _interprete = new Interprete(socket);
 
 }
 

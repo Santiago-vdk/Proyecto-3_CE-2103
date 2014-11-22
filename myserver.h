@@ -24,6 +24,9 @@ signals:
 public slots:
     void authUsuario(QString pUsuario, QString pContrasenia);
     void regisUsuario(QString pUsuario, QString pContrasenia);
+    void dropUser(QString pUsuario);
+        void actualizarPermisos(QString pUsuario,QString pPermisos, QString pArchivo);
+        void quitarPermisos(QString pUsuario,QString pPermisos, QString pArchivo);
 
 
 private:

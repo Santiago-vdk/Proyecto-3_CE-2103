@@ -20,6 +20,9 @@ signals:
     void auth(QString object1, QString object2);
     void registrar(QString object1, QString object2);
     void emitirNotificacionUsuario(QString pMensaje);
+    void eliminarUsuario(QString pUsuario);
+    void cambiarPermisos(QString pUsuario,QString pPermisos, QString pArchivo);
+    void removerPermisos(QString pUsuario,QString pPermisos, QString pArchivo);
 
 public slots:
     void readyRead();

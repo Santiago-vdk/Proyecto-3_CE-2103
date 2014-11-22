@@ -30,9 +30,10 @@ GUI::GUI(QWidget *parent, QTcpSocket *socket) :
     this->hide();
     this->setWindowFlags( (windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMaximizeButtonHint);
 
-    facade = new Facade();
-
     _socket = socket;
+    facade = new Facade(_socket);
+
+
 
 
 

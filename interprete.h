@@ -3,13 +3,14 @@
 #include <string>
 #include "sistemaArchivos.h"
 #include "listaTabla.h"
+#include <QTcpSocket>
 using namespace std;
 
 class Interprete
 {
 public:
 
-    Interprete();
+    Interprete(QTcpSocket *socket);
     bool revisarSintaxis(string sentencia);
     bool ejecutar(string sentencia);
     tabla *getTablaTmp();
@@ -63,6 +64,8 @@ private:
     listaTabla * _listaTablas;
     bool _revisandoColumna;
     tabla *_tablaTmp;
+
+    QTcpSocket *_socket;
 
 };
 

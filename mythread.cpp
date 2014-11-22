@@ -50,15 +50,17 @@ void MyThread::readyRead()
     Data = socket->readLine();
 
     QString dataString(Data);
-    QString usuario(socket->readLine()) ;
-    QString contrasenia(socket->readLine());
 
 
 
-    socket->flush();
+
+
 
     if(dataString == "001\n"){
         qDebug() << "Caso 001, Autenticacion";
+
+        QString usuario(socket->readLine()) ;
+        QString contrasenia(socket->readLine());
 
         //Elimino el \n
         string usuarioTmp = usuario.toStdString();
@@ -80,6 +82,9 @@ void MyThread::readyRead()
     if(dataString == "002\n"){
         qDebug() << "Caso 002, Registro";
 
+        QString usuario(socket->readLine()) ;
+        QString contrasenia(socket->readLine());
+
 //        QString usuario(socket->readLine()) ;
 //        QString contrasenia(socket->readLine());
 
@@ -96,16 +101,87 @@ void MyThread::readyRead()
 
         //Llamo al Slot de registro
         registrar(usuarioListo,contraListo);
-
     }
 
+    if(dataString == "003\n"){
+
+        QString usuario(socket->readLine()) ;
+
+
+        //Elimino el \n
+        string usuarioTmp = usuario.toStdString();
+        usuarioTmp.erase(std::remove(usuarioTmp.begin(),usuarioTmp.end(), '\n'));
+        //Convierto las entradas de nuevo a QString
+        QString usuarioListo = QString::fromStdString(usuarioTmp);
+        //Llamo al Slot de registro
+        eliminarUsuario(usuarioListo);
+    }
+
+    if(dataString == "004\n"){
+
+
+        QString usuario(socket->readLine()) ;
+        QString permiso(socket->readLine());
+        QString archivo(socket->readLine());
+
+        qDebug() << "En thread " << usuario << permiso << archivo;
+
+        //Elimino el \n
+        string usuarioTmp = usuario.toStdString();
+        usuarioTmp.erase(std::remove(usuarioTmp.begin(),usuarioTmp.end(), '\n'));
+
+        string permisoTmp = permiso.toStdString();
+        permisoTmp.erase(std::remove(permisoTmp.begin(),permisoTmp.end(), '\n'));
+
+        string archivoTmp = archivo.toStdString();
+        archivoTmp.erase(std::remove(archivoTmp.begin(),archivoTmp.end(), '\n'));
+
+        //Convierto las entradas de nuevo a QString
+        QString usuarioListo = QString::fromStdString(usuarioTmp);
+        QString permisoListo = QString::fromStdString(permisoTmp);
+        QString archivoListo = QString::fromStdString(archivoTmp);
+
+        //Llamo al Slot de registro
+        cambiarPermisos(usuarioListo,permisoListo,archivoListo);
+    }
+
+
+    if(dataString == "005\n"){
+
+
+        QString usuario(socket->readLine()) ;
+        QString permiso(socket->readLine());
+        QString archivo(socket->readLine());
+
+        qDebug() << "En thread " << usuario << permiso << archivo;
+
+        //Elimino el \n
+        string usuarioTmp = usuario.toStdString();
+        usuarioTmp.erase(std::remove(usuarioTmp.begin(),usuarioTmp.end(), '\n'));
+
+        string permisoTmp = permiso.toStdString();
+        permisoTmp.erase(std::remove(permisoTmp.begin(),permisoTmp.end(), '\n'));
+
+        string archivoTmp = archivo.toStdString();
+        archivoTmp.erase(std::remove(archivoTmp.begin(),archivoTmp.end(), '\n'));
+
+        //Convierto las entradas de nuevo a QString
+        QString usuarioListo = QString::fromStdString(usuarioTmp);
+        QString permisoListo = QString::fromStdString(permisoTmp);
+        QString archivoListo = QString::fromStdString(archivoTmp);
+
+        //Llamo al Slot de registro
+        removerPermiso(usuarioListo,permisoListo,archivoListo);
+    }
+
+        socket->flush();
 
     // will write on server side window
     //qDebug() << socketDescriptor << " Data in: " << Data;
     //socket->write(Data);
 
-    qDebug() << "escribo";
-    test();
+//    qDebug() << "escribo";
+//    test();
 
 
 
@@ -129,6 +205,8 @@ void MyThread::llegadaNotificacion(QString pCodigo)
 {
     qDebug() << pCodigo;
 }
+
+
 
 void MyThread::test()
 {

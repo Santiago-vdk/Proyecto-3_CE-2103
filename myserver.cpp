@@ -107,12 +107,222 @@ void MyServer::regisUsuario(QString pUsuario, QString pContrasenia)
     qDebug() << "Agregando nuevo usuario";
     SimpleCrypt crypto(Q_UINT64_C(0x0c2ad4a4acb9f023));
     ofstream archivo(nombreArchivoUsuarios, fstream::app);
-    archivo.seekp(0);
+    ofstream archivoPermisos(nombreArchivoPermisos, fstream::app);
+    archivo.seekp(0);  //Fragil
+    archivoPermisos.seekp(0);
+
+    //Escribo encriptadamente sobre usuarios
     QString STREAM = pUsuario + "," + pContrasenia;
     QString streamENCRIPTADO = crypto.encryptToString(STREAM);
     archivo << streamENCRIPTADO.toStdString() << endl;
     archivo.close();
+
+    //Escribo sobre los permisos al usuario
+    QString STREAMPERMISOS = pUsuario;
+
+    archivoPermisos << STREAMPERMISOS.toStdString() << endl;
+    archivoPermisos.close();
+
+    archivoPermisos.close();
 }
+
+void MyServer::dropUser(QString pUsuario)
+{
+    SimpleCrypt crypto(Q_UINT64_C(0x0c2ad4a4acb9f023));
+    ifstream archivo(nombreArchivoUsuarios);
+    ofstream out("outfile.txt");
+    string lineRead;
+    string comparaUser = pUsuario.toStdString();
+    while(getline(archivo, lineRead)){
+        QString lineTmp = QString::fromStdString(lineRead);
+        QString lineDesencriptado = crypto.decryptToString(lineTmp);
+        string line = lineDesencriptado.toStdString();
+
+        if (!line.substr(0,line.find(",")).compare(comparaUser) == 0 ){
+            qDebug("Existe usuario");
+            out << lineRead << "\n";
+        }
+    }
+    archivo.close();
+    out.close();
+    // delete the original file
+    remove(nombreArchivoUsuarios);
+    // rename old to new
+    rename("outfile.txt",nombreArchivoUsuarios);
+}
+
+void MyServer::actualizarPermisos(QString pUsuario, QString pPermisos, QString pArchivo)
+{
+
+        SimpleCrypt crypto(Q_UINT64_C(0x0c2ad4a4acb9f023));
+    ifstream archivo(nombreArchivoUsuarios);
+
+    ifstream archivoPermisos(nombreArchivoPermisos);
+
+    ofstream archivoPermisosTmp("temporal.txt");
+
+
+    string lineRead;
+    string comparaUser = pUsuario.toStdString();
+    string comparaPermisos = pPermisos.toStdString();
+    string comparaArchivo = pArchivo.toStdString();
+
+
+
+
+    while(getline(archivo, lineRead)){
+        QString lineTmp = QString::fromStdString(lineRead);
+        QString lineDesencriptado = crypto.decryptToString(lineTmp);
+        string line = lineDesencriptado.toStdString();
+
+        if (line.substr(0,line.find(",")).compare(comparaUser) == 0 ){ //Usuario Correcto
+            qDebug("Existe usuario");
+            string lineReadPermisos;
+                archivoPermisos.seekg(0);
+            while(getline(archivoPermisos, lineReadPermisos)){
+                 if (lineReadPermisos.substr(0,lineReadPermisos.find(",")).compare(comparaUser) == 0 ){
+                     qDebug("Existe en permisos");
+
+
+                        cout << lineReadPermisos << endl;
+                     if (lineReadPermisos.find(comparaArchivo) != string::npos ){
+
+
+
+                         qDebug("habia archivo");
+
+                         string STREAMPERMISOS = lineReadPermisos.substr(lineReadPermisos.find("(",lineReadPermisos.find(comparaArchivo)) + 1,lineReadPermisos.find(")",lineReadPermisos.find(comparaArchivo)) - lineReadPermisos.find("(",lineReadPermisos.find(comparaArchivo)) - 1);
+                         string antesFound = lineReadPermisos.substr(0,lineReadPermisos.find("(",lineReadPermisos.find(comparaArchivo)) + 1);
+                         string despuesFound = lineReadPermisos.substr(lineReadPermisos.find(")",lineReadPermisos.find(comparaArchivo)),lineRead.length());
+
+                         string permisoSelect = STREAMPERMISOS.substr(0,1);
+                         string permisoInsert = STREAMPERMISOS.substr(2,1);
+                         string permisoDelete = STREAMPERMISOS.substr(4,1);
+                         string permisoUpdate = STREAMPERMISOS.substr(6,1);
+
+                         if(comparaPermisos.compare("select") == 0){
+                             permisoSelect = "1";
+                         }
+                         if(comparaPermisos.compare("insert") == 0){
+                             permisoInsert = "1";
+                         }
+                         if(comparaPermisos.compare("delete") == 0){
+                             permisoDelete = "1";
+                         }
+                         if(comparaPermisos.compare("update") == 0){
+                             permisoUpdate = "1";
+                         }
+
+
+
+                         cout << "here"<< permisoSelect + "," + permisoInsert + "," + permisoDelete + "," + permisoUpdate << endl;
+
+
+                         STREAMPERMISOS = permisoSelect + "," + permisoInsert + "," + permisoDelete + "," + permisoUpdate;
+
+                         cout << STREAMPERMISOS << endl;
+
+
+
+
+
+                         archivoPermisos.seekg(0);
+                         string itera;
+                         while(getline(archivoPermisos, itera)){
+
+                             if (itera.substr(0,itera.find(",")).compare(comparaUser) == 0 ){
+                                 archivoPermisosTmp <<antesFound <<  STREAMPERMISOS << despuesFound << "\n";
+                             }
+                             else{
+                                 archivoPermisosTmp << itera << "\n";
+                             }
+
+                         }
+
+
+                     }
+                     else{
+
+                         string STREAMNUEVO;
+
+
+                         string permisoSelect;
+                         string permisoInsert;
+                         string permisoDelete;
+                         string permisoUpdate;
+
+                         if(comparaPermisos.compare("select") == 0){
+
+                             permisoSelect = "1";
+                             permisoInsert = "0";
+                             permisoDelete = "0";
+                             permisoUpdate = "0";
+                         }
+                         if(comparaPermisos.compare("insert") == 0){
+                             permisoSelect = "0";
+                             permisoInsert = "1";
+                             permisoDelete = "0";
+                             permisoUpdate = "0";
+                         }
+                         if(comparaPermisos.compare("delete") == 0){
+                             permisoSelect = "0";
+                             permisoInsert = "0";
+                             permisoDelete = "1";
+                             permisoUpdate = "0";
+                         }
+                         if(comparaPermisos.compare("update") == 0){
+                             permisoSelect = "0";
+                             permisoInsert = "0";
+                             permisoDelete = "0";
+                             permisoUpdate = "1";
+                         }
+
+                         STREAMNUEVO = lineReadPermisos+","+ comparaArchivo + "(" + permisoSelect + ","+ permisoInsert + ","+ permisoDelete + ","+ permisoUpdate + ")";
+
+                         cout << STREAMNUEVO << endl;
+
+
+                         string itera;
+
+
+                         archivoPermisos.seekg(0);
+                         while(getline(archivoPermisos, itera)){
+
+
+                             if (itera.substr(0,itera.find(",")).compare(comparaUser) == 0 ){
+
+                                 archivoPermisosTmp << STREAMNUEVO << "\n";
+                             }
+                             else{
+                                 archivoPermisosTmp << itera << "\n";
+                             }
+
+                         }
+
+
+
+                     }
+                 }
+            }
+        }
+    }
+
+
+    archivoPermisosTmp.close();
+    archivo.close();
+    archivoPermisos.close();
+
+    remove(nombreArchivoPermisos);
+
+    rename("temporal.txt",nombreArchivoPermisos);
+
+
+
+
+
+
+}
+
 
 
 
@@ -182,6 +392,11 @@ void MyServer::incomingConnection(qintptr socketDescriptor)
     connect(thread, SIGNAL(registrar(QString , QString )), this, SLOT(regisUsuario(QString , QString ))); //Slot registrar
 
     connect(this, SIGNAL(notifaciones(QString)), thread, SLOT(llegadaNotificacion(QString))); //Comunicacion textual servidor-cliente
+    connect(thread, SIGNAL(eliminarUsuario(QString)), this, SLOT(dropUser(QString))); //Slot registrar
+    connect(thread,SIGNAL(cambiarPermisos(QString,QString,QString)),this,SLOT(actualizarPermisos(QString,QString,QString)));
+
+    connect(thread,SIGNAL(removerPermisos(QString,QString,QString)),this,SLOT(quitarPermisos(QString,QString,QString)));
+
 
     thread->start();
 }

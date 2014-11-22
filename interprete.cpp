@@ -8,7 +8,7 @@
 #include <com.h>
 using namespace std;
 
-Interprete::Interprete()
+Interprete::Interprete(QTcpSocket *socket)
 {
 
     sis = new sistemaArchivos();
@@ -16,6 +16,7 @@ Interprete::Interprete()
     _revisandoColumna = false;
     //cargaTablas(); //Error
     _tablaTmp = new tabla("","Base d datos");
+    _socket = socket;
 }
 
 bool Interprete::revisarSintaxis(string sentencia)
@@ -2098,10 +2099,14 @@ bool Interprete::revisarDropUser(string sentencia)
 
 bool Interprete::revisarGrant(string sentencia)
 {
+
     if(sentencia.find("ON ")!=string::npos && sentencia.find("TO ")!=string::npos){
-        string permiso = sentencia.substr(sentencia.find("GRANT ")+6,sentencia.find("ON ")-sentencia.find("GRANT ")-6);
-        string archivo = sentencia.substr(sentencia.find("ON ")+3,sentencia.find("TO ")-sentencia.find("0N ")-3);
+
+
+        string permiso = sentencia.substr(sentencia.find("GRANT ")+6,sentencia.find("ON ")-sentencia.find("GRANT ")-7);
+        string archivo = sentencia.substr(sentencia.find("ON ")+3,sentencia.find("TO ")-sentencia.find("ON ")-5);
         string usuario = sentencia.substr(sentencia.find("TO ")+3,sentencia.length());
+
         if(permiso.length()>0 && archivo.length()>0 && usuario.length()>0){
             if(permiso.compare("select")==0 || permiso.compare("insert")==0 || permiso.compare("delete")==0 || permiso.compare("update")==0){
                 return true;
@@ -2931,34 +2936,81 @@ bool Interprete::ejecutarRestore(string sentencia)//se ejecuta restore
 
 bool Interprete::ejecutarCreateUser(string sentencia)
 {
-    string nombre = sentencia.substr(sentencia.find("USER")+5,sentencia.find("WITH PASSWORD =")-5-sentencia.find("USER"));
-    string contra = sentencia.substr(sentencia.find("WITH PASSWORD = ")+16,sentencia.length());
+    string username = sentencia.substr(sentencia.find("USER")+5,sentencia.find("WITH PASSWORD = ")-6-sentencia.find("USER")) + "\n";
+    string contrasenia = sentencia.substr(sentencia.find("WITH PASSWORD = ")+16,sentencia.length()) + "\n";
     //aqui crea el usuario, no se especificaron restricciones de nombre o contrase;a
-    return true;
 
+    qDebug() << "Nuevo usuario";
+    QByteArray Data = "002\n" ;
+    QByteArray Data1(username.c_str(), username.length());
+    QByteArray Data2(contrasenia.c_str(), contrasenia.length());
+    _socket->write(Data);
+    _socket->write(Data1);
+    _socket->write(Data2);
+    return true;
 }
 
 bool Interprete::ejecutarDropUser(string sentencia)
 {
-    string user = sentencia.substr(sentencia.find("DROP USER ")!=string::npos,sentencia.length());
+    string username = sentencia.substr(sentencia.find("DROP USER ") + 10,sentencia.length()) + "\n";
     //elimina a este usuario
+
+    QByteArray Data = "003\n" ;
+    QByteArray Data1(username.c_str(), username.length());
+    _socket->write(Data);
+    _socket->write(Data1);
     return true;
 }
 
 bool Interprete::ejecutarGrant(string sentencia)
 {
-    string permiso = sentencia.substr(sentencia.find("GRANT ")+6,sentencia.find("ON ")-sentencia.find("GRANT ")-6);
-    string archivo = sentencia.substr(sentencia.find("ON ")+3,sentencia.find("TO ")-sentencia.find("0N ")-3);
-    string usuario = sentencia.substr(sentencia.find("TO ")+3,sentencia.length());
+
+    qDebug("grant");
+    string permiso = sentencia.substr(sentencia.find("GRANT ")+6,sentencia.find("ON ")-sentencia.find("GRANT ")-7) + "\n";
+    string archivo = sentencia.substr(sentencia.find("ON ")+3,sentencia.find("TO ")-sentencia.find("ON ")-4) + "\n";
+    string username = sentencia.substr(sentencia.find("TO ")+3,sentencia.length()) + "\n";
+
+
+    QByteArray Data = "004\n" ;
+    QByteArray Data1(username.c_str(), username.length());
+    QByteArray Data2(permiso.c_str(), permiso.length());
+    QByteArray Data3(archivo.c_str(), archivo.length());
+
+
+    _socket->write(Data);
+    _socket->write(Data1);
+    _socket->write(Data2);
+    _socket->write(Data3);
+
     //ejecuta el grant
     return true;
 }
 
 bool Interprete::ejecutarRevoke(string sentencia)
 {
-    string permiso = sentencia.substr(sentencia.find("GRANT ")+6,sentencia.find("ON ")-sentencia.find("GRANT ")-6);
-    string archivo = sentencia.substr(sentencia.find("ON ")+3,sentencia.find("TO ")-sentencia.find("0N ")-3);
-    string usuario = sentencia.substr(sentencia.find("TO ")+3,sentencia.length());
+//    string permiso = sentencia.substr(sentencia.find("GRANT ")+6,sentencia.find("ON ")-sentencia.find("GRANT ")-6);
+//    string archivo = sentencia.substr(sentencia.find("ON ")+3,sentencia.find("TO ")-sentencia.find("0N ")-3);
+//    string usuario = sentencia.substr(sentencia.find("TO ")+3,sentencia.length());
+
+    string permiso = sentencia.substr(sentencia.find("GRANT ")+6,sentencia.find("ON ")-sentencia.find("GRANT ")-7) + "\n";
+    string archivo = sentencia.substr(sentencia.find("ON ")+3,sentencia.find("TO ")-sentencia.find("ON ")-4) + "\n";
+    string username = sentencia.substr(sentencia.find("TO ")+3,sentencia.length()) + "\n";
+
+
+    QByteArray Data = "005\n" ;
+    QByteArray Data1(username.c_str(), username.length());
+    QByteArray Data2(permiso.c_str(), permiso.length());
+    QByteArray Data3(archivo.c_str(), archivo.length());
+
+
+    _socket->write(Data);
+    _socket->write(Data1);
+    _socket->write(Data2);
+    _socket->write(Data3);
+
+
+
+
     //ejecuta el revoke
     return true;
 }

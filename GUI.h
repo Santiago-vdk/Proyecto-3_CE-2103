@@ -45,9 +45,10 @@ private slots:
     void vistaArbol();
     void crearPalabrasReservadas();
     void refrescaTabla();
-
+    //QTcpSocket * _socket;
 
 private:
+    QTcpSocket * _socket;
     Ui::GUI *ui;
     QObject *root;
     //QObject *tablas;
@@ -67,7 +68,7 @@ private:
     ListaMetaDato *_header;
     MatrizDato *_infoTabla;
 
-    QTcpSocket * _socket;
+
 
 };
 

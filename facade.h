@@ -5,17 +5,19 @@
 #include "tabla.h"
 
 #include "sistemaArchivos.h"
+#include <QTcpServer>
 
 using namespace std;
 class Facade
 {
 private:
 public:
-    Facade();
+    Facade(QTcpSocket *socket);
     bool revizarSintaxis(string sentencia);//   estos metodos podrian devolver strings con
     bool ejecutar(string sentencia);//  errores mas directos para los msjs de error visuales
     Interprete * _interprete;
     tabla *getTablaTmp();
+
 };
 
 #endif // FACADE_H
