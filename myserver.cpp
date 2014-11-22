@@ -386,7 +386,7 @@ void MyServer::incomingConnection(qintptr socketDescriptor)
     connect(thread,SIGNAL(cambiarPermisos(QString,QString,QString)),this,SLOT(actualizarPermisos(QString,QString,QString)));
 
     connect(thread,SIGNAL(removerPermisos(QString,QString,QString)),this,SLOT(quitarPermisos(QString,QString,QString)));
-    connect(thread,SIGNAL(sentenciaDeUsuario(QString)),this,SLOT(sentenciaNuevaUsuario(QString)));
+    //connect(thread,SIGNAL(sentenciaDeUsuario(QString)),this,SLOT(sentenciaNuevaUsuario(QString)));
 
 
     thread->start();
