@@ -11,6 +11,7 @@ class Interprete
 public:
 
     Interprete(QTcpSocket *socket);
+    Interprete();
     bool revisarSintaxis(string sentencia);
     bool ejecutar(string sentencia);
     tabla *getTablaTmp();
@@ -66,6 +67,8 @@ private:
     tabla *_tablaTmp;
 
     QTcpSocket *_socket;
+
+    bool serverSide;
 
 };
 

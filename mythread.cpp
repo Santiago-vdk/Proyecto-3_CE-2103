@@ -174,6 +174,31 @@ void MyThread::readyRead()
         removerPermiso(usuarioListo,permisoListo,archivoListo);
     }
 
+
+
+
+    if(dataString == "006\n"){
+
+
+        QString sentencia(socket->readLine()) ;
+
+
+
+
+        //Elimino el \n
+        string sentenciaTmp = sentencia.toStdString();
+        sentenciaTmp.erase(std::remove(sentenciaTmp.begin(),sentenciaTmp.end(), '\n'));
+
+
+
+        //Convierto las entradas de nuevo a QString
+        QString sentenciaListo = QString::fromStdString(sentenciaTmp);
+
+
+        //Llamo al Slot de registro
+        sentenciaDeUsuario(sentenciaListo);
+    }
+
         socket->flush();
 
     // will write on server side window

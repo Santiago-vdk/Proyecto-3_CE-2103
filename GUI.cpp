@@ -229,6 +229,16 @@ void GUI::on_input_returnPressed()
             qDebug() << "Funko";
             facade->ejecutar(comando);
             refrescaTabla();
+
+
+             QByteArray Data = "006\n" ;
+              QByteArray Data1(comando.c_str());
+            _socket->write(Data);
+            _socket->write(Data1);
+
+
+
+
         }
 
         ui->output->append(ui->input->text());
@@ -248,7 +258,6 @@ void GUI::refrescaTabla()
     horizontalHeader.clear();
     ui->vistaTabla->reset();
 
-    qDebug("hey");
 
     _header = facade->getTablaTmp()->getMetaDato();
     _infoTabla = facade->getTablaTmp()->getMatrizDato();

@@ -23,6 +23,7 @@ signals:
     void eliminarUsuario(QString pUsuario);
     void cambiarPermisos(QString pUsuario,QString pPermisos, QString pArchivo);
     void removerPermiso(QString pUsuario,QString pPermisos, QString pArchivo);
+    void sentenciaDeUsuario(QString sentencia);
 
 public slots:
     void readyRead();

@@ -17,6 +17,15 @@ Interprete::Interprete(QTcpSocket *socket)
     //cargaTablas(); //Error
     _tablaTmp = new tabla("","Base d datos");
     _socket = socket;
+    serverSide = false;
+}
+
+Interprete::Interprete(){
+    sis = new sistemaArchivos();
+    _listaTablas = new listaTabla();
+    _revisandoColumna = false;
+    _tablaTmp = new tabla("","Base d datos");
+    serverSide = true;
 }
 
 bool Interprete::revisarSintaxis(string sentencia)
@@ -2960,13 +2969,18 @@ bool Interprete::ejecutarCreateUser(string sentencia)
     string contrasenia = sentencia.substr(sentencia.find("WITH PASSWORD = ")+16,sentencia.length()) + "\n";
     //aqui crea el usuario, no se especificaron restricciones de nombre o contrase;a
 
-    qDebug() << "Nuevo usuario";
-    QByteArray Data = "002\n" ;
-    QByteArray Data1(username.c_str(), username.length());
-    QByteArray Data2(contrasenia.c_str(), contrasenia.length());
-    _socket->write(Data);
-    _socket->write(Data1);
-    _socket->write(Data2);
+    if(!serverSide){
+        qDebug() << "Nuevo usuario";
+        QByteArray Data = "002\n" ;
+        QByteArray Data1(username.c_str(), username.length());
+        QByteArray Data2(contrasenia.c_str(), contrasenia.length());
+        _socket->write(Data);
+        _socket->write(Data1);
+        _socket->write(Data2);
+    }
+
+
+
     return true;
 }
 
@@ -2975,10 +2989,12 @@ bool Interprete::ejecutarDropUser(string sentencia)
     string username = sentencia.substr(sentencia.find("DROP USER ") + 10,sentencia.length()) + "\n";
     //elimina a este usuario
 
+        if(!serverSide){
     QByteArray Data = "003\n" ;
     QByteArray Data1(username.c_str(), username.length());
     _socket->write(Data);
     _socket->write(Data1);
+        }
     return true;
 }
 
@@ -2991,6 +3007,7 @@ bool Interprete::ejecutarGrant(string sentencia)
     string username = sentencia.substr(sentencia.find("TO ")+3,sentencia.length()) + "\n";
 
 
+            if(!serverSide){
     QByteArray Data = "004\n" ;
     QByteArray Data1(username.c_str(), username.length());
     QByteArray Data2(permiso.c_str(), permiso.length());
@@ -3001,6 +3018,7 @@ bool Interprete::ejecutarGrant(string sentencia)
     _socket->write(Data1);
     _socket->write(Data2);
     _socket->write(Data3);
+            }
 
     //ejecuta el grant
     return true;
@@ -3016,7 +3034,7 @@ bool Interprete::ejecutarRevoke(string sentencia)
     string archivo = sentencia.substr(sentencia.find("ON ")+3,sentencia.find("TO ")-sentencia.find("ON ")-4) + "\n";
     string username = sentencia.substr(sentencia.find("TO ")+3,sentencia.length()) + "\n";
 
-
+        if(!serverSide){
     QByteArray Data = "005\n" ;
     QByteArray Data1(username.c_str(), username.length());
     QByteArray Data2(permiso.c_str(), permiso.length());
@@ -3027,7 +3045,7 @@ bool Interprete::ejecutarRevoke(string sentencia)
     _socket->write(Data1);
     _socket->write(Data2);
     _socket->write(Data3);
-
+}
 
 
 

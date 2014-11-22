@@ -6,6 +6,7 @@
 #include <QTcpServer>
 #include "mythread.h"
 #include "fstream"
+#include "interprete.h"
 
 
 using namespace std;
@@ -27,6 +28,7 @@ public slots:
     void dropUser(QString pUsuario);
         void actualizarPermisos(QString pUsuario,QString pPermisos, QString pArchivo);
         void quitarPermisos(QString pUsuario,QString pPermisos, QString pArchivo);
+        void sentenciaNuevaUsuario(QString sentencia);
 
 
 private:
@@ -35,6 +37,7 @@ private:
     void crearPermisosSuperUsuario();
     char * nombreArchivoUsuarios;
     char * nombreArchivoPermisos;
+    Interprete *_interprete;
 
 
 

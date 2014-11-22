@@ -7,6 +7,7 @@
 #include "string"
 
 #include "simplecrypt.h"
+#include "interprete.h"
 
 using namespace std;
 
@@ -22,6 +23,8 @@ void MyServer::startServer(QString ip, QString puerto, bool archivoUsers, bool a
     int port = puerto.toInt();
     QHostAddress a;
     a = QHostAddress("192.168.1.140"); //ip
+
+    _interprete = new Interprete(NULL);
 
     //Nombre default del archivo que contiene los usuarios
     nombreArchivoUsuarios = "usuarios.txt";
@@ -303,6 +306,11 @@ void MyServer::quitarPermisos(QString pUsuario, QString pPermisos, QString pArch
 
 }
 
+void MyServer::sentenciaNuevaUsuario(QString sentencia)
+{
+
+}
+
 
 
 
@@ -376,6 +384,7 @@ void MyServer::incomingConnection(qintptr socketDescriptor)
     connect(thread,SIGNAL(cambiarPermisos(QString,QString,QString)),this,SLOT(actualizarPermisos(QString,QString,QString)));
 
     connect(thread,SIGNAL(removerPermisos(QString,QString,QString)),this,SLOT(quitarPermisos(QString,QString,QString)));
+    connect(thread,SIGNAL(sentenciaDeUsuario(QString)),this,SLOT(sentenciaNuevaUsuario(QString)));
 
 
     thread->start();
